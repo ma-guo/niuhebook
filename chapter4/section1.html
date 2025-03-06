@@ -1,0 +1,882 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>XORM 代码生成 - niuhe 插件使用教程</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">niuhe 插件使用教程</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="xorm-代码生成"><a class="header" href="#xorm-代码生成">xorm 代码生成</a></h2>
+<p>在实际开发中, 每添加一个表时，一般就会有对应的增删改查操作, 而这些操作代码又高度相似，copy 代码时枯燥乏味。因此在插件中添加了 xorm 基本代码生成功能。让编码更聚焦核心功能。</p>
+<h3 id="如何使用"><a class="header" href="#如何使用">如何使用</a></h3>
+<p>插件仅在 <code>niuhe/.model.niuhe</code> 中读取表定义并生成代码。</p>
+<pre><code class="language-python">#mode 可选 默认值为 api,
+#niuhe 可选, 默认值为 False, 在生成对应的 niuhe 是否覆盖已存在的 niuhe 文件内容
+#dao 可选, 默认值为 False, 在生成对应的 dao 是否覆盖已存在的 dao 文件内容
+#service 可选, 默认值为 False, 在生成对应的 service 是否覆盖已存在的 service 文件内容
+#model 可选, 默认值为 False, 在生成对应的 model 是否覆盖已存在的 model 文件内容
+#vite 可选, 默认值为 False, 在生成对应的 vite 是否覆盖已存在的 vite 文件内容, 需在 .config.json5 中 langs 中添加 "vite"
+#这里是做示例用, 实际开发中直接写 class Config():即可
+class Config(mode='api', niuhe=True, dao=True, service=True, model=True, vite=True):
+    '''系统配置表'''
+    name = required.String(desc='配置名称', index=True, search=True, len=255, notnull=True)# index 加索引, len varchar 最大长度, notnull 是否为空 search 分页查询时是否出现在参数中
+    value = required.Long(desc='配置值', search=True)
+</code></pre>
+<p>上述参数说明</p>
+<div class="table-wrapper"><table><thead><tr><th>参数</th><th>类型</th><th>默认值</th><th>必须</th><th>描述</th></tr></thead><tbody>
+<tr><td>mode</td><td>str</td><td>'api'</td><td>可选</td><td>生成代码的在哪个mode下</td></tr>
+<tr><td>niuhe</td><td>bool</td><td>False</td><td>可选</td><td>是否覆盖已存在的 niuhe 文件内容</td></tr>
+<tr><td>dao</td><td>bool</td><td>False</td><td>可选</td><td>是否覆盖已存在的 dao 文件内容</td></tr>
+<tr><td>service</td><td>bool</td><td>False</td><td>可选</td><td>是否覆盖已存在的 service 文件内容</td></tr>
+<tr><td>model</td><td>bool</td><td>False</td><td>可选</td><td>是否覆盖已存在的 model 文件内容</td></tr>
+<tr><td>vite</td><td>bool</td><td>False</td><td>可选</td><td>是否覆盖已存在的 vite 文件内容, 需要配置 .config.json5 中的 langs 添加 "vite"</td></tr>
+</tbody></table>
+</div>
+<p>当首次生成代码时, 会生成以下几个文件(以 #app=demo)</p>
+<ul>
+<li>niuhe/api_config.niuhe (需要手动 include 到 all.niuhe 中)</li>
+<li>src/demo/xorm/models/config.go</li>
+<li>src/demo/xorm/daos/config_dao.go</li>
+<li>src/demo/xorm/services/config_svc.go</li>
+<li>src/demo/app/api/views/config_views.go (include 后才会生成)</li>
+<li>src/demo/app/api/views/gen_config_views.go (include 后才会生成)</li>
+<li>vite/api_config.vue (需要在 .config.json5 中 langs 添加 "vite")</li>
+</ul>
+<p>除上述文件外, 如配置了 <code>docs</code>, <code>ts</code> 等语言的生成，也会更新对应的文件内容. 各个生成的文件内容如下:</p>
+<blockquote>
+<p>本节以下文件内容均为插件生成</p>
+</blockquote>
+<h3 id="niuheapi_configniuhe"><a class="header" href="#niuheapi_configniuhe">niuhe/api_config.niuhe</a></h3>
+<pre><code class="language-python">
+class ConfigItem():
+	'''系统配置表'''
+	id = optional.Long(desc='id')
+	name = required.StringField(desc='配置名称')
+	value = required.LongField(desc='配置值')
+	create_at = optional.String(desc='创建时间')
+	update_at = optional.String(desc='更新时间')
+
+class ConfigFormReq():
+	'''请求 Config 信息'''
+	id = required.Long()
+
+class ConfigPageReq():
+	'''分页查询 Config 信息'''
+	page = required.Integer(desc='页码')
+	size = required.Integer(desc='每页数量')
+	value = required.LongField(desc='配置值')
+
+class ConfigPageRsp():
+	'''分页查询 Config 信息'''
+	total = required.Long(desc='总数')
+	items = repeated.Message(cls=ConfigItem, desc='Config信息')
+
+class ConfigDeleteReq():
+	'''批量删除 Config 信息'''
+	ids = repeated.Long(desc='记录id列表')
+
+class ConfigNoneRsp():
+	'''Config 无数据返回'''
+	pass
+
+with services():
+	GET('分页查询获取 Config 信息', '/api/config/page/', ConfigPageReq, ConfigPageRsp)
+	GET('查询获取 Config 信息', '/api/config/form/', ConfigFormReq, ConfigItem)
+	POST('添加 Config 信息', '/api/config/add/', ConfigItem, ConfigItem)
+	POST('更新 Config 信息', '/api/config/update/', ConfigItem, ConfigItem)
+	DELETE('删除 Config 信息', '/api/config/delete/', ConfigDeleteReq, ConfigNoneRsp)
+</code></pre>
+<h3 id="model-表定义"><a class="header" href="#model-表定义">model 表定义</a></h3>
+<p>src/demo/xorm/models/config.go</p>
+<pre><code class="language-go">package models
+
+// Generated by niuhe.idl
+
+// 如要同步表结构, 需要手动将 Config 手动添加到 models.go 文件的 GetSyncModels 数组中
+
+import (
+	"demo/app/api/protos"
+
+	"time"
+)
+
+// 系统配置表
+type Config struct {
+	Id       int64     `xorm:"NOT NULL PK AUTOINCR INT(11)"`
+	Name     string    `xorm:"VARCHAR(255) COMMENT('配置名称')"` // 配置名称
+	Value    int64     `xorm:"INT COMMENT('配置值')"`           // 配置值
+	CreateAt time.Time `xorm:"created"`                      // 创建时间
+	UpdateAt time.Time `xorm:"updated"`                      // 更新时间
+	DeleteAt time.Time `xorm:"deleted"`                      // 删除时间
+}
+
+func (row *Config) ToProto(item *protos.ConfigItem) *protos.ConfigItem {
+	if item == nil {
+		item = &amp;protos.ConfigItem{}
+	}
+	item.Id = row.Id
+	item.Name = row.Name
+	item.Value = row.Value
+	item.CreateAt = row.CreateAt.Format(time.DateTime)
+	item.UpdateAt = row.UpdateAt.Format(time.DateTime)
+	return item
+}
+</code></pre>
+<h3 id="dao-表定义"><a class="header" href="#dao-表定义">dao 表定义</a></h3>
+<p>src/demo/xorm/daos/config_dao.go</p>
+<pre><code class="language-go">package daos
+
+// Generated by niuhe.idl
+
+import (
+	"demo/xorm/models"
+	"github.com/ma-guo/niuhe"
+)
+
+// 系统配置表
+type _ConfigDao struct {
+	*Dao
+}
+
+// 系统配置表
+func (dao *Dao) Config() *_ConfigDao {
+	return &amp;_ConfigDao{Dao: dao}
+}
+
+// 根据ID获取数据
+func (dao *_ConfigDao) GetByIds(ids ...int64) ([]*models.Config, error) {
+	rows := []*models.Config{}
+	session := dao.db()
+	err := session.In("id", ids).Desc("`id`").Find(&amp;rows)
+	if err != nil {
+		niuhe.LogInfo("GetByIds Config error: %v", err)
+		return nil, err
+	}
+	return rows, nil
+}
+
+// 分页获取数据
+func (dao *_ConfigDao) GetPage(page, size int, value int64) ([]*models.Config, int64, error) {
+	rows := make([]*models.Config, 0)
+	session := dao.db()
+	dao.Like(session, "`value`", value)
+	dao.Limit(session, page, size)
+	total, err := session.Desc("`id`").FindAndCount(&amp;rows)
+	if err != nil {
+		niuhe.LogInfo("GetPage Config error: %v", err)
+		return nil, 0, err
+	}
+	return rows, total, nil
+}
+</code></pre>
+<h3 id="service-表定义"><a class="header" href="#service-表定义">service 表定义</a></h3>
+<p>src/demo/xorm/services/config_svc.go</p>
+<pre><code class="language-go">package services
+
+// Generated by niuhe.idl
+
+import (
+	"github.com/ma-guo/niuhe"
+
+	"demo/xorm/models"
+)
+
+// 系统配置表
+type _ConfigSvc struct {
+	*_Svc
+}
+
+// 系统配置表
+func (svc *_Svc) Config() *_ConfigSvc {
+	return &amp;_ConfigSvc{svc}
+}
+
+// 获取单个数据
+func (svc *_ConfigSvc) GetById(id int64) (*models.Config, bool, error) {
+	if id &lt;= 0 {
+		return nil, false, nil
+	}
+	row := &amp;models.Config{Id: id}
+	has, err := svc.dao().GetBy(row)
+	if err != nil {
+		niuhe.LogInfo("GetById Config error: %v", err)
+	}
+	return row, has, err
+}
+
+// 获取单个数据
+func (svc *_ConfigSvc) GetBy(row *models.Config) (bool, error) {
+	has, err := svc.dao().GetBy(row)
+	if err != nil {
+		niuhe.LogInfo("GetBy Config error: %v", err)
+	}
+	return has, err
+}
+
+// 更新数据
+func (svc *_ConfigSvc) Update(row *models.Config) (bool, error) {
+	has, err := svc.dao().Update(row.Id, row)
+	if err != nil {
+		niuhe.LogInfo("Update Config error: %v", err)
+	}
+	return has, err
+}
+
+// 插入数据
+func (svc *_ConfigSvc) Insert(rows ...*models.Config) error {
+	if len(rows) == 0 {
+		return nil
+	}
+	// 2000条是经验值, 可根据自己需要更改
+	batchSize := 2000
+	for i := 0; i &lt; len(rows); i += batchSize {
+		end := i + batchSize
+		if end &gt; len(rows) {
+			end = len(rows)
+		}
+		_, err := svc.dao().Insert(rows[i:end])
+		if err != nil {
+			niuhe.LogInfo("Insert Config error: %v", err)
+			return err
+		}
+	}
+	return nil
+}
+
+// 删除数据
+func (svc *_ConfigSvc) Delete(rows []*models.Config) error {
+	if len(rows) == 0 {
+		return nil
+	}
+	_, err := svc.dao().Delete(rows)
+	if err != nil {
+		niuhe.LogInfo("Delete Config error: %v", err)
+	}
+	return err
+}
+
+// 根据 id 获取 map 数据
+func (svc *_ConfigSvc) GetByIds(ids ...int64) (map[int64]*models.Config, error) {
+	rowsMap := make(map[int64]*models.Config, 0)
+	if len(ids) == 0 {
+		return rowsMap, nil
+	}
+	rows, err := svc.dao().Config().GetByIds(ids...)
+	if err != nil {
+		niuhe.LogInfo("GetByIds Config error: %v", err)
+		return nil, err
+	}
+	for _, row := range rows {
+		rowsMap[row.Id] = row
+	}
+	return rowsMap, nil
+}
+
+// 分页获取数据
+func (svc *_ConfigSvc) GetPage(page, size int, value int64) ([]*models.Config, int64, error) {
+	rows, total, err := svc.dao().Config().GetPage(page, size, value)
+	if err != nil {
+		niuhe.LogInfo("GetPage Config error: %v", err)
+	}
+	return rows, total, nil
+}
+</code></pre>
+<h3 id="config_views-定义"><a class="header" href="#config_views-定义">config_views 定义</a></h3>
+<p>src/demo/xorm/models/config_views.go</p>
+<pre><code class="language-go">package services
+
+// Generated by niuhe.idl
+
+import (
+	"github.com/ma-guo/niuhe"
+
+	"demo/xorm/models"
+)
+
+// 系统配置表
+type _ConfigSvc struct {
+	*_Svc
+}
+
+// 系统配置表
+func (svc *_Svc) Config() *_ConfigSvc {
+	return &amp;_ConfigSvc{svc}
+}
+
+// 获取单个数据
+func (svc *_ConfigSvc) GetById(id int64) (*models.Config, bool, error) {
+	if id &lt;= 0 {
+		return nil, false, nil
+	}
+	row := &amp;models.Config{Id: id}
+	has, err := svc.dao().GetBy(row)
+	if err != nil {
+		niuhe.LogInfo("GetById Config error: %v", err)
+	}
+	return row, has, err
+}
+
+// 获取单个数据
+func (svc *_ConfigSvc) GetBy(row *models.Config) (bool, error) {
+	has, err := svc.dao().GetBy(row)
+	if err != nil {
+		niuhe.LogInfo("GetBy Config error: %v", err)
+	}
+	return has, err
+}
+
+// 更新数据
+func (svc *_ConfigSvc) Update(row *models.Config) (bool, error) {
+	has, err := svc.dao().Update(row.Id, row)
+	if err != nil {
+		niuhe.LogInfo("Update Config error: %v", err)
+	}
+	return has, err
+}
+
+// 插入数据
+func (svc *_ConfigSvc) Insert(rows ...*models.Config) error {
+	if len(rows) == 0 {
+		return nil
+	}
+	// 2000条是经验值, 可根据自己需要更改
+	batchSize := 2000
+	for i := 0; i &lt; len(rows); i += batchSize {
+		end := i + batchSize
+		if end &gt; len(rows) {
+			end = len(rows)
+		}
+		_, err := svc.dao().Insert(rows[i:end])
+		if err != nil {
+			niuhe.LogInfo("Insert Config error: %v", err)
+			return err
+		}
+	}
+	return nil
+}
+
+// 删除数据
+func (svc *_ConfigSvc) Delete(rows []*models.Config) error {
+	if len(rows) == 0 {
+		return nil
+	}
+	_, err := svc.dao().Delete(rows)
+	if err != nil {
+		niuhe.LogInfo("Delete Config error: %v", err)
+	}
+	return err
+}
+
+// 根据 id 获取 map 数据
+func (svc *_ConfigSvc) GetByIds(ids ...int64) (map[int64]*models.Config, error) {
+	rowsMap := make(map[int64]*models.Config, 0)
+	if len(ids) == 0 {
+		return rowsMap, nil
+	}
+	rows, err := svc.dao().Config().GetByIds(ids...)
+	if err != nil {
+		niuhe.LogInfo("GetByIds Config error: %v", err)
+		return nil, err
+	}
+	for _, row := range rows {
+		rowsMap[row.Id] = row
+	}
+	return rowsMap, nil
+}
+
+// 分页获取数据
+func (svc *_ConfigSvc) GetPage(page, size int, value int64) ([]*models.Config, int64, error) {
+	rows, total, err := svc.dao().Config().GetPage(page, size, value)
+	if err != nil {
+		niuhe.LogInfo("GetPage Config error: %v", err)
+	}
+	return rows, total, nil
+}
+
+</code></pre>
+<h3 id="新增的-protos-定义"><a class="header" href="#新增的-protos-定义">新增的 protos 定义</a></h3>
+<p>src/demo/api/protos/gen_protos.go</p>
+<pre><code class="language-go">
+// 系统配置表
+type ConfigItem struct {
+	Id       int64  `json:"id" zpf_name:"id"`                       //	id
+	Name     string `json:"name" zpf_name:"name" zpf_reqd:"true"`   //	配置名称
+	Value    int64  `json:"value" zpf_name:"value" zpf_reqd:"true"` //	配置值
+	CreateAt string `json:"create_at" zpf_name:"create_at"`         //	创建时间
+	UpdateAt string `json:"update_at" zpf_name:"update_at"`         //	更新时间
+}
+
+// 请求,Config,信息
+type ConfigFormReq struct {
+	Id int64 `json:"id" zpf_name:"id" zpf_reqd:"true"`
+}
+
+// 分页查询,Config,信息
+type ConfigPageReq struct {
+	Page  int   `json:"page" zpf_name:"page" zpf_reqd:"true"`   //	页码
+	Size  int   `json:"size" zpf_name:"size" zpf_reqd:"true"`   //	每页数量
+	Value int64 `json:"value" zpf_name:"value" zpf_reqd:"true"` //	配置值
+}
+
+// 分页查询,Config,信息
+type ConfigPageRsp struct {
+	Total int64         `json:"total" zpf_name:"total" zpf_reqd:"true"` //	总数
+	Items []*ConfigItem `json:"items" zpf_name:"items"`                 //	Config信息
+}
+
+// 批量删除,Config,信息
+type ConfigDeleteReq struct {
+	Ids []int64 `json:"ids" zpf_name:"ids"` //	记录id列表
+}
+
+// Config,无数据返回
+type ConfigNoneRsp struct {
+}
+</code></pre>
+<h3 id="vite-定义"><a class="header" href="#vite-定义">vite 定义</a></h3>
+<p>文件路径 <code>vite/api_config.vue</code>。vite 需结合 <a href="https://github.com/ma-guo/vue3-element-admin">vue3-element-admin</a> 库使用, 是生成的增删改查 api 管理页面内容。</p>
+<pre><code class="language-vue">&lt;template&gt;
+  &lt;div class="app-container"&gt;
+    &lt;div class="search-container"&gt;
+      &lt;el-form ref="queryFormRef" :model="queryParams" :inline="true"&gt;
+        &lt;el-form-item prop="value" label="配置值"&gt;
+          &lt;el-input v-model="queryParams.value" placeholder="配置值" clearable @keyup.enter="fetchPage" /&gt;
+        &lt;/el-form-item&gt;
+        &lt;el-form-item&gt;
+          &lt;el-button type="primary" @click="fetchPage"&gt;&lt;i-ep-search /&gt;搜索&lt;/el-button&gt;
+          &lt;el-button @click="resetQuery"&gt;&lt;i-ep-refresh /&gt;重置&lt;/el-button&gt;
+        &lt;/el-form-item&gt;
+      &lt;/el-form&gt;
+    &lt;/div&gt;
+
+    &lt;el-card shadow="never" class="table-container"&gt;
+      &lt;template #header&gt;
+        &lt;el-button @click="openDialogWithAdd()" type="success"&gt;&lt;i-ep-plus /&gt;新增&lt;/el-button&gt;
+        &lt;el-button type="danger" :disabled="state.ids.length === 0"
+          @click="bantchDelete()"&gt;&lt;i-ep-delete /&gt;删除&lt;/el-button&gt;
+      &lt;/template&gt;
+      &lt;el-table ref="dataTableRef" v-loading="state.loading" :data="configItems" highlight-current-row border
+        @selection-change="handleSelectionChange"&gt;
+        &lt;el-table-column type="selection" width="55" align="center" /&gt;
+        &lt;el-table-column label="ID" prop="id" align="center" /&gt;
+        &lt;el-table-column label="配置名称" prop="name" align="center" /&gt;
+        &lt;el-table-column label="配置值" prop="value" align="center" /&gt;
+        &lt;el-table-column fixed="right" label="操作" width="140" align="center"&gt;
+          &lt;template #default="{ row }"&gt;
+            &lt;el-button type="primary" size="small" link @click="openDialogWithEdit(row.id)"&gt;
+              &lt;i-ep-edit /&gt;编辑
+            &lt;/el-button&gt;
+            &lt;el-button type="primary" size="small" link @click="handleDelete(row.id)"&gt;
+              &lt;i-ep-delete /&gt;删除
+            &lt;/el-button&gt;
+          &lt;/template&gt;
+        &lt;/el-table-column&gt;
+      &lt;/el-table&gt;
+
+      &lt;pagination v-if="state.total &gt; 0" v-model:total="state.total" v-model:page="queryParams.page"
+        v-model:limit="queryParams.size" @pagination="fetchPage" /&gt;
+    &lt;/el-card&gt;
+
+    &lt;!-- Config 表单弹窗 --&gt;
+    &lt;el-dialog v-model="state.dialogVisible" :title="state.dialogTitle" @close="closeDialog"&gt;
+      &lt;el-form ref="configFormRef" :model="formData" :rules="rules" label-width="100px"&gt;
+        &lt;el-form-item label="ID" prop="id" v-if="formData.id &gt; 0"&gt;
+          &lt;el-input v-model="formData.id" disabled placeholder="" /&gt;
+        &lt;/el-form-item&gt;
+        &lt;el-form-item prop="name" label="配置名称"&gt;
+          &lt;el-input v-model="formData.name" placeholder="配置名称" clearable /&gt;
+        &lt;/el-form-item&gt;
+        &lt;el-form-item prop="value" label="配置值"&gt;
+          &lt;el-input v-model="formData.value" placeholder="配置值" clearable /&gt;
+        &lt;/el-form-item&gt;
+      &lt;/el-form&gt;
+
+      &lt;template #footer&gt;
+        &lt;div class="dialog-footer"&gt;
+          &lt;el-button type="primary" @click="handleSubmit"&gt;确 定&lt;/el-button&gt;
+          &lt;el-button @click="closeDialog"&gt;取 消&lt;/el-button&gt;
+        &lt;/div&gt;
+      &lt;/template&gt;
+    &lt;/el-dialog&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script setup lang="ts"&gt;
+
+import { setConfigAdd } from "@/api/demo/api";
+import { setConfigUpdate } from "@/api/demo/api";
+import { deleteConfigDelete } from "@/api/demo/api";
+import { getConfigForm } from "@/api/demo/api";
+import { getConfigPage } from "@/api/demo/api";
+
+defineOptions({
+  name: "config",
+  inheritAttrs: false,
+});
+
+const queryFormRef = ref(ElForm);
+
+const configFormRef = ref(ElForm);
+const configItems = ref&lt;Demo.ConfigItem[]&gt;();
+const state = reactive({
+  loading: false,
+  total: 0,
+  ids: [] as number[],
+  dialogVisible: false,
+  dialogTitle: "",
+});
+
+const queryParams = reactive&lt;Demo.ConfigPageReq&gt;({
+  page: 1,
+  size: 10,
+  value: 0,
+});
+
+const formData = reactive&lt;Demo.ConfigItem&gt;({
+  id: 0,
+  name: "",
+  value: 0,
+  create_at: "",
+  update_at: ""
+});
+
+// 根据需要添加校验规则
+const rules = reactive({
+  //   name: [{ required: true, message: "本字段必填", trigger: "blur" }],
+});
+
+/** 查询 */
+const fetchPage = async () =&gt; {
+  state.loading = true;
+  const rsp = await getConfigPage(queryParams);
+  state.loading = false;
+  if (rsp.result == 0) {
+    configItems.value = rsp.data.items;
+    state.total = rsp.data.total;
+  }
+}
+/** 重置查询 */
+function resetQuery() {
+  queryFormRef.value.resetFields();
+  queryParams.page = 1;
+  fetchPage();
+}
+
+/** 行checkbox 选中事件 */
+function handleSelectionChange(selection: any) {
+  state.ids = selection.map((item: any) =&gt; item.id);
+}
+
+/** 打开添加弹窗 */
+function openDialogWithAdd() {
+  state.dialogVisible = true;
+  state.dialogTitle = "添加Config";
+  resetForm();
+}
+/** 打开编辑弹窗 */
+const openDialogWithEdit = async (roleId: number) =&gt; {
+  state.dialogVisible = true;
+  state.dialogTitle = "修改Config";
+  state.loading = true;
+  const rsp = await getConfigForm({ id: roleId });
+  state.loading = false;
+  if (rsp.result == 0) {
+    Object.assign(formData, rsp.data);
+  }
+}
+
+/** 保存提交 */
+function handleSubmit() {
+  configFormRef.value.validate((valid: any) =&gt; {
+    if (valid) {
+      if (formData.id) {
+        updateRowRecord();
+      } else {
+        addRowRecord();
+      }
+    }
+  });
+}
+/** 新增记录 */
+const addRowRecord = async () =&gt; {
+  state.loading = true;
+  const rsp = await setConfigAdd(formData);
+  state.loading = false
+  if (rsp.result == 0) {
+    ElMessage.success("添加成功");
+    closeDialog();
+    resetQuery();
+  }
+}
+/** 修改记录 */
+const updateRowRecord = async () =&gt; {
+  state.loading = true;
+  const rsp = await setConfigUpdate(formData);
+  state.loading = false
+  if (rsp.result == 0) {
+    ElMessage.success("修改成功");
+    closeDialog();
+    resetQuery();
+  }
+}
+/** 关闭表单弹窗 */
+function closeDialog() {
+  state.dialogVisible = false;
+  resetForm();
+}
+
+/** 重置表单 */
+function resetForm() {
+  const value = configFormRef.value;
+  if (value) {
+    value.resetFields();
+    value.clearValidate();
+  }
+  formData.id = 0;
+  formData.name = "";
+  formData.value = 0;
+  formData.create_at = "";
+  formData.update_at = "";
+}
+
+/** 删除 Config */
+function handleDelete(id: number) {
+  ElMessageBox.confirm("确认删除已选中的数据项?", "警告", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(async () =&gt; {
+    state.loading = true;
+    const rsp = await deleteConfigDelete({ ids: [id] });
+    state.loading = false;
+    if (rsp.result == 0) {
+      ElMessage.success("删除成功");
+      resetQuery();
+    }
+  });
+}
+
+/** 批量删除 */
+const bantchDelete = () =&gt; {
+  if (state.ids.length &lt;= 0) {
+    ElMessage.warning("请勾选删除项");
+    return;
+  }
+  ElMessageBox.confirm("确认删除已选中的数据项?", "警告", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(async () =&gt; {
+    state.loading = true;
+    const rsp = await deleteConfigDelete({ ids: state.ids });
+    state.loading = false;
+    if (rsp.result == 0) {
+      ElMessage.success("删除成功");
+    }
+    resetQuery();
+  });
+};
+
+onMounted(() =&gt; {
+  fetchPage();
+});
+&lt;/script&gt;
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../chapter4/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../chapter4/section2.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../chapter4/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../chapter4/section2.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

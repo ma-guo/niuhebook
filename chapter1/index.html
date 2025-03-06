@@ -1,0 +1,230 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>介绍 - niuhe 插件使用教程</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">niuhe 插件使用教程</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <p><a href="https://marketplace.visualstudio.com/items?itemName=dequan.niuhe">Vscode niuhe</a> 插件是一款面向 golang 的后端 IDL 定义翻译插件, 旨在简化后端开发流程, 提高开发效率. 它可以通过简单的 <a href="../chapter2/section3.html">niuhe idl 语法</a> 定义接口, 生成对应的 go 服务代码, 前端 api 定义, swagger 文档, 以及其他语言的协议定义. 让开发人员专注于业务逻辑, 而不是繁琐的代码生成工作.</p>
+<h2 id="核心功能"><a class="header" href="#核心功能">核心功能</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>功能模块</th><th>核心能力</th><th>适用场景</th></tr></thead><tbody>
+<tr><td>Go语言支持</td><td>自动生成服务框架代码：包含路由配置、请求参数解析、响应格式处理等基础代码</td><td>后端开发</td></tr>
+<tr><td><a href="../chapter3/section3.html">TypeScript支持</a></td><td>一键生成前端API调用代码，支持Web/小程序/React Native等场景</td><td>前端开发</td></tr>
+<tr><td><a href="../chapter3/section2.html">文档生成</a></td><td>自动生成Swagger文档，支持导入Postman/Apifox等测试工具</td><td>接口测试</td></tr>
+<tr><td><a href="../chapter4/section2.html">多语言协议</a></td><td>生成标准化协议文件，支持自定义转换到其他编程语言</td><td>跨语言协作</td></tr>
+</tbody></table>
+</div>
+<h2 id="go服务核心特性"><a class="header" href="#go服务核心特性">Go服务核心特性</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>功能</th><th>优势</th></tr></thead><tbody>
+<tr><td>智能路由</td><td>自动根据文件结构生成路由配置，无需手动维护</td></tr>
+<tr><td>参数处理</td><td>内置请求参数校验和响应格式化，专注业务逻辑开发</td></tr>
+<tr><td><a href="../chapter4/section1.html">XORM集成</a></td><td>自动生成数据库操作代码（表结构定义、DAO层、服务层）</td></tr>
+<tr><td>常量管理</td><td>统一管理业务常量，提升代码可维护性</td></tr>
+</tbody></table>
+</div>
+<h2 id="配套解决方案"><a class="header" href="#配套解决方案">配套解决方案</a></h2>
+<p>开提供开箱即用的管理系统模板，加速企业级应用开发：</p>
+<div class="table-wrapper"><table><thead><tr><th>解决方案</th><th>亮点</th></tr></thead><tbody>
+<tr><td><a href="../chapter5/section1.html">Admin-Core</a></td><td>内置RBAC权限体系，快速实现用户/角色/菜单管理</td></tr>
+<tr><td><a href="../chapter5/section4.html">Vue3管理模板</a></td><td>基于流行技术栈（Vue3+Element Plus），提供完整后台功能组件</td></tr>
+</tbody></table>
+</div>
+<h2 id="实践案例"><a class="header" href="#实践案例">实践案例</a></h2>
+<ul>
+<li><a href="https://github.com/ma-guo/admin-core-niuhe">admin-core-niuhe</a> 完整示例项目（后端）</li>
+<li><a href="https://github.com/ma-guo/admin-core-test">admin-core-test</a> 前端框架接入示例</li>
+<li><a href="http://admindemo.zuxing.net">在线演示</a> Vue3管理后台演示（账号: admin / 123456）</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+                            <a rel="next prefetch" href="../chapter2/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+                    <a rel="next prefetch" href="../chapter2/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
